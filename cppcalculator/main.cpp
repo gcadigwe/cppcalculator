@@ -52,8 +52,11 @@ std::string trim(const std::string& str) {
 int main(int argc, const char * argv[]) {
     
     while(true) {
-        char operators[] = {'/','*','+','-'};
-        int operator_size = 4;
+        char operators[] = {'/','*'};
+        char loweroperators[] = {'+', '-'};
+        
+        int operator_size = 2;
+        int final_result = 0;
 
         std::string temp;
 
@@ -75,11 +78,13 @@ int main(int argc, const char * argv[]) {
             while(j < std::strlen(temp.c_str())){
 
                 if(temp.c_str()[j] == operators[i]){
+                    
+//                    std::cout << "Operator Found " << operators[i] << std::endl;
 
                     // count the number of times this operator appears
                     auto count = std::count(temp.begin(), temp.end(), temp.c_str()[j]);
 
-                    std::cout << "Count " << count << std::endl;
+//                    std::cout << "Count " << count << std::endl;
 
 
 
@@ -131,10 +136,10 @@ int main(int argc, const char * argv[]) {
                         temp.replace(startindex, endindex-startindex+1, std::to_string(result));
                         j = 0;
 
-                        std::cout << "Input now " << temp << std::endl;
-                        std::cout << "Result " << result << std::endl;
+//                        std::cout << "Input now " << temp << std::endl;
+//                        std::cout << "Result " << result << std::endl;
 
-
+                        final_result = result;
                     }
 
 //                }
@@ -143,6 +148,78 @@ int main(int argc, const char * argv[]) {
             }
 
         }
+        
+        int i = 0;
+        
+        while(i < std::strlen(temp.c_str())) {
+            
+            if(std::find(std::begin(loweroperators), std::end(loweroperators), temp.c_str()[i]) != std::end(loweroperators)){
+                
+//                std::cout << "Operator Found " << temp.c_str()[i] << std::endl;
+                
+                // count the number of times this operator appears
+                auto count = std::count(temp.begin(), temp.end(), temp.c_str()[i]);
+                
+//                std::cout << "Count " << count << std::endl;
+                
+                int before_operator = i;
+                std::string expfirstpart;
+                std::string expsecondpart;
+                int startindex = i;
+                int endindex = i;
+                int after_operator = i+1;
+                
+                for(int k = before_operator - 1; k >= 0; k--){
+                    
+                    
+                    if (temp.c_str()[k] == '/' || temp.c_str()[k] == '*' || temp.c_str()[k] == '+' || temp.c_str()[k] == '-'){
+                        
+                        break;
+                        
+                    }else{
+                        expfirstpart.append(std::string(1, temp.c_str()[k]));
+                        startindex--;
+                    }
+                    
+                    
+                }
+                
+                
+                std::reverse(expfirstpart.begin(), expfirstpart.end());
+                
+                
+                for(int l = after_operator; l < std::strlen(temp.c_str()); l++){
+                    
+                    
+                    if (temp.c_str()[l] == '/' || temp.c_str()[l] == '*' || temp.c_str()[l] == '+' || temp.c_str()[l] == '-'){
+                        
+                        break;
+                        
+                    }else{
+                        expsecondpart.append(std::string(1, temp.c_str()[l]));
+                        endindex++;
+                    }
+                    
+                    
+                }
+                
+                
+                int result = evaluate(std::stoi(expfirstpart), std::stoi(expsecondpart), temp.c_str()[i]);
+                
+                temp.replace(startindex, endindex-startindex+1, std::to_string(result));
+                i = 0;
+                
+//                std::cout << "Input now " << temp << std::endl;
+//                std::cout << "Result 2" << result << std::endl;
+                
+                final_result = result;
+                
+                
+            }
+            i++;
+        }
+        
+        std::cout << "Result: " << final_result << std::endl;
 
         delete[] input;
     };
